@@ -9,6 +9,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stepper1 from "./Component/Steppers/Stepper1";
 import Stepper2 from "./Component/Steppers/Stepper2";
+import Header from "./Component/Header/Header";
+import ProfileCard from "./Component/ProfileCard/ProfileCard";
+import { Alert } from "@mui/material";
+import { updateProfileData } from "./Services/Api";
 const steps = ["Personal Information", "Address", "Final Check"];
 
 export default function App() {
@@ -35,8 +39,14 @@ export default function App() {
     return skipped.has(step);
   };
 
-  const handleNext = () => {
+  console.log(activeStep);
+  const handleNext = async () => {
     let newSkipped = skipped;
+
+    if (activeStep === steps.length - 1) {
+      await updateProfileData(form);
+    }
+
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
@@ -75,7 +85,8 @@ export default function App() {
 
   return (
     <>
-      <Container className=" h-100">
+      <Header />
+      <Container className=" h-100 max-height-80-percentage mt-24px">
         <Box
           className="h-100 pt-24 pb-24"
           sx={{
@@ -85,29 +96,34 @@ export default function App() {
             justifyContent: "space-between"
           }}
         >
-          <Stepper activeStep={activeStep}>
-            {steps.map((label, index) => {
-              const stepProps = {};
-              const labelProps = {};
-              if (isStepOptional(index)) {
-                labelProps.optional = (
-                  <Typography variant="caption"></Typography>
+          {activeStep === 3 && (
+            <Alert severity="success">Form submitted successfully!</Alert>
+          )}
+          <ConditionalRender condition={activeStep !== 3}>
+            <Stepper activeStep={activeStep}>
+              {steps.map((label, index) => {
+                const stepProps = {};
+                const labelProps = {};
+                if (isStepOptional(index)) {
+                  labelProps.optional = (
+                    <Typography variant="caption"></Typography>
+                  );
+                }
+                if (isStepSkipped(index)) {
+                  stepProps.completed = false;
+                }
+                return (
+                  <Step key={label} {...stepProps}>
+                    <StepLabel {...labelProps}>{label}</StepLabel>
+                  </Step>
                 );
-              }
-              if (isStepSkipped(index)) {
-                stepProps.completed = false;
-              }
-              return (
-                <Step key={label} {...stepProps}>
-                  <StepLabel {...labelProps}>{label}</StepLabel>
-                </Step>
-              );
-            })}
-          </Stepper>
+              })}
+            </Stepper>
+          </ConditionalRender>
           <ConditionalRender condition={activeStep === steps.length}>
             <React.Fragment>
               <Typography sx={{ mt: 2, mb: 1 }}>
-                All steps completed - you&apos;re finished
+                {/* All steps completed - you&apos;re finished */}
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Box sx={{ flex: "1 1 auto" }} />
@@ -140,8 +156,7 @@ export default function App() {
             </ConditionalRender>
 
             <ConditionalRender condition={activeStep === 2}>
-              <Stepper1 onChange={(event) => {}} value={form} />
-              <Stepper2 onChange={(event) => {}} value={form} />
+              <ProfileCard value={form} />
             </ConditionalRender>
           </section>
 

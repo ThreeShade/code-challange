@@ -1,4 +1,7 @@
-export async function postData(Data) {
+import axios from "axios";
+import { API } from "../utils/Constants";
+
+export async function updateProfileData(Data) {
   try {
     let headersList = {
       Accept: "*/*",
@@ -7,17 +10,15 @@ export async function postData(Data) {
 
     let bodyContent = JSON.stringify(Data);
 
-    let response = await fetch(
-      "https://webhook.site/1c05b9be-60b8-42b0-9590-3d0f60da82cd",
-      {
-        method: "POST",
-        body: bodyContent,
-        headers: headersList
-      }
-    );
+    let reqOptions = {
+      url: API.baseURL,
+      method: "POST",
+      headers: headersList,
+      data: bodyContent
+    };
 
-    await response.json();
-    return { message: "Form subitted" };
+    let response = await axios.request(reqOptions);
+    console.log(response.data);
   } catch (error) {
     console.error(error);
     return { message: "something went wrong" };
