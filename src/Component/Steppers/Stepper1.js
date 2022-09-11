@@ -1,74 +1,73 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
-import { validate } from "../../utils/validations";
-function Stepper1({ onChange, value }) {
+function Stepper1({ onChange, value, error }) {
   return (
-    <form onChange={onChange} className="stepper-form-section ">
+    <form onChange={onChange} className='stepper-form-section '>
       <TextField
         required
-        error={validate("name", value.fullName)?.error}
-        label="Full name"
+        label='Full name'
         type={"text"}
-        name="fullName"
-        className="mr-16px mb-16px"
+        name='fullName'
+        className='mr-16px mb-16px'
         value={value.fullName}
-        // helperText={validate("name",value.fullName)?.message}
-        variant="standard"
+        error={!!value.fullName ? error.fullName !== true : false}
+        helperText={!!value.fullName && error.fullName}
+        variant='standard'
       />
       <TextField
         required
-        className="mr-16px mb-16px"
-        error={false}
-        label="Email"
+        className='mr-16px mb-16px'
+        label='Email'
         type={"email"}
-        name="email"
+        name='email'
         value={value.email}
-        // helperText="Incorrect email"
-        variant="standard"
+        error={!!value.email ? error.email !== true : false}
+        helperText={!!value.email && error.email}
+        variant='standard'
       />
       <TextField
         required
-        className="mr-16px mb-16px"
-        error={false}
-        label="Phone number"
-        name="phoneNumber"
+        className='mr-16px mb-16px'
+        label='Phone number'
+        name='phoneNumber'
         type={"tel"}
         value={value.phoneNumber}
-        // helperText="Incorrect phone number"
-        variant="standard"
+        error={!!value.phoneNumber ? error.phoneNumber !== true : false}
+        helperText={!!value.phoneNumber && error.phoneNumber}
+        variant='standard'
       />
       <TextField
         required
-        className="mr-16px mb-16px"
+        className='mr-16px mb-16px'
         type={"number"}
-        error={false}
-        label="Age"
-        name="age"
+        label='Age'
+        name='age'
         value={value.age}
-        // helperText="Incorrect phone number"
-        variant="standard"
+        error={!!value.age ? error.age !== true : false}
+        helperText={!!value.age && error.age}
+        variant='standard'
       />
       <TextField
         required
-        className="mr-16px mb-16px"
+        className='mr-16px mb-16px'
         type={"number"}
-        error={false}
-        label="Height"
-        name="height"
+        label='Height (CMS)'
+        name='height'
         value={value.height}
-        // helperText="Incorrect height"
-        variant="standard"
+        error={!!value.height ? error.height !== true : false}
+        helperText={!!value.height && error.height}
+        variant='standard'
       />
       <TextField
         required
-        className="mr-16px mb-16px"
+        className='mr-16px mb-16px'
         type={"text"}
-        error={false}
-        label="Weight"
-        name="weight"
+        label='Weight (KG)'
+        name='weight'
         value={value.weight}
-        // helperText="Incorrect weight"
-        variant="standard"
+        error={!!value.weight ? error.weight !== true : false}
+        helperText={!!value.weight && error.weight}
+        variant='standard'
       />
     </form>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
@@ -13,24 +13,28 @@ import Header from "./Component/Header/Header";
 import ProfileCard from "./Component/ProfileCard/ProfileCard";
 import { Alert } from "@mui/material";
 import { updateProfileData } from "./Services/Api";
+import { validate } from "./utils/validations";
+import { stepperOneFields, stepperTwoFields } from "./utils/Constants";
 const steps = ["Personal Information", "Address", "Final Check"];
 
 export default function App() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
+  const [error, setError] = useState({});
   const [form, setForm] = useState({
     fullName: "",
     email: "",
     phoneNumber: "",
     age: "",
-    dob: "",
     height: "",
     weight: "",
     luckyNumber: "",
     color: "",
-    street: "",
-    pinCode: ""
+    country: "",
+    pinCode: "",
+    city: ""
   });
+
   const isStepOptional = (step) => {
     return step === 1;
   };
@@ -39,7 +43,6 @@ export default function App() {
     return skipped.has(step);
   };
 
-  console.log(activeStep);
   const handleNext = async () => {
     let newSkipped = skipped;
 
@@ -61,12 +64,6 @@ export default function App() {
   };
 
   const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped((prevSkipped) => {
       const newSkipped = new Set(prevSkipped.values());
@@ -76,19 +73,82 @@ export default function App() {
   };
 
   const handleReset = () => {
+    setForm({
+      fullName: "",
+      email: "",
+      phoneNumber: "",
+      age: "",
+      height: "",
+      weight: "",
+      luckyNumber: "",
+      color: "",
+      country: "",
+      pinCode: "",
+      city: ""
+    });
     setActiveStep(0);
+    setError({});
   };
 
   function onChangeHandler(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
+  const onSelectAddressHandler = (addressData) => {
+    if (
+      Array.isArray(addressData.address_components) &&
+      addressData.address_components.length > 0
+    ) {
+      let data = {};
+      for (const address of addressData.address_components) {
+        data = { ...data, ...handleAddress(address.long_name, address.types) };
+      }
+      setForm({ ...form, ...data });
+    }
+  };
+
+  const handleAddress = (_value, fieldType) => {
+    switch (true) {
+      case fieldType.includes("postal_code"): {
+        return { pinCode: +_value };
+      }
+      case fieldType.includes("administrative_area_level_2"): {
+        return { city: _value };
+      }
+      case fieldType.includes("country"): {
+        return { country: _value };
+      }
+      default:
+        return {};
+    }
+  };
+
+  useEffect(() => {
+    let _errors = error;
+    for (const filedName in form) {
+      _errors = { ..._errors, ...validate(filedName, form[filedName]) };
+    }
+    setError(_errors);
+    // eslint-disable-next-line
+  }, [form]);
+
+  //button-disable handler function
+  function buttonDisableHandler() {
+    if (activeStep === 0) {
+      return !stepperOneFields.every((field) => error[field] === true);
+    } else if (activeStep === 1) {
+      return !stepperTwoFields.every((field) => error[field] === true);
+    } else {
+      return false;
+    }
+  }
+
   return (
     <>
       <Header />
-      <Container className=" h-100 max-height-80-percentage mt-24px">
+      <Container className=' h-100 max-height-80-percentage mt-24px'>
         <Box
-          className="h-100 pt-24 pb-24"
+          className='h-100 pt-24 pb-24'
           sx={{
             width: "100%",
             display: "flex",
@@ -96,18 +156,14 @@ export default function App() {
             justifyContent: "space-between"
           }}
         >
-          {activeStep === 3 && (
-            <Alert severity="success">Form submitted successfully!</Alert>
-          )}
+          {activeStep === 3 && <Alert severity='success'>Form submitted successfully!</Alert>}
           <ConditionalRender condition={activeStep !== 3}>
             <Stepper activeStep={activeStep}>
               {steps.map((label, index) => {
                 const stepProps = {};
                 const labelProps = {};
                 if (isStepOptional(index)) {
-                  labelProps.optional = (
-                    <Typography variant="caption"></Typography>
-                  );
+                  labelProps.optional = <Typography variant='caption'></Typography>;
                 }
                 if (isStepSkipped(index)) {
                   stepProps.completed = false;
@@ -131,14 +187,13 @@ export default function App() {
               </Box>
             </React.Fragment>
           </ConditionalRender>
-          <ConditionalRender
-            condition={activeStep === steps.length}
-          ></ConditionalRender>
+          <ConditionalRender condition={activeStep === steps.length}></ConditionalRender>
           {/* Forms */}
 
-          <section className="max-width-70 mx-auto">
+          <section className='max-width-70 mx-auto'>
             <ConditionalRender condition={activeStep === 0}>
               <Stepper1
+                error={error}
                 onChange={(event) => {
                   onChangeHandler(event);
                 }}
@@ -148,10 +203,12 @@ export default function App() {
 
             <ConditionalRender condition={activeStep === 1}>
               <Stepper2
+                error={error}
                 onChange={(event) => {
                   onChangeHandler(event);
                 }}
                 value={form}
+                onSelectAddress={onSelectAddressHandler}
               />
             </ConditionalRender>
 
@@ -164,7 +221,7 @@ export default function App() {
           <ConditionalRender condition={activeStep !== steps.length}>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button
-                color="inherit"
+                color='inherit'
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 sx={{ mr: 1 }}
@@ -173,12 +230,12 @@ export default function App() {
               </Button>
               <Box sx={{ flex: "1 1 auto" }} />
               {isStepOptional(activeStep) && (
-                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                <Button color='inherit' onClick={handleSkip} sx={{ mr: 1 }}>
                   Skip
                 </Button>
               )}
 
-              <Button onClick={handleNext}>
+              <Button onClick={handleNext} disabled={buttonDisableHandler()}>
                 {activeStep === steps.length - 1 ? "Finish" : "Next"}
               </Button>
             </Box>

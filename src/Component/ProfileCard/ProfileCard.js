@@ -6,32 +6,37 @@ import Typography from "@mui/material/Typography";
 import { CardActionArea, TextField } from "@mui/material";
 
 export default function ProfileCard({ value }) {
-
   return (
     <Card sx={{ boxShadow: "none", paddingTop: "24px", paddingBottom: "24px" }}>
-      <CardActionArea className="  ">
+      <CardActionArea className='box-shadow-default'>
         <CardMedia
-          component="img"
-          style={{ objectFit: "contain", width: "auto" }}
-          height="150"
-          image="https://thispersondoesnotexist.com/image"
-          alt="green iguana"
+          component='img'
+          style={{
+            objectFit: "contain",
+            width: "auto",
+            borderRadius: "16px",
+            margin: "16px 16px 0"
+          }}
+          height='150'
+          image='https://thispersondoesnotexist.com/image'
+          alt='green iguana'
         />
         <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography gutterBottom variant='h5' component='div'>
             Personal Information
           </Typography>
-          <section className="stepper-form-section max-height-80-percentage">
+          <section className='stepper-form-section max-height-80-percentage'>
             {Object.entries(value).map(([key, _value]) => (
-              <React.Fragment key={_value}>
-                <TextField
-                  disabled
-                  label={key}
-                  className="mr-16px mb-16px"
-                  value={_value}
-                  // helperText={validate("name",value.fullName)?.message}
-                  variant="standard"
-                />
+              <React.Fragment key={key}>
+                {!!_value && (
+                  <TextField
+                    disabled
+                    label={key}
+                    className='mr-16px mb-16px text-transform-capitalize'
+                    value={_value}
+                    variant='standard'
+                  />
+                )}
               </React.Fragment>
             ))}
           </section>

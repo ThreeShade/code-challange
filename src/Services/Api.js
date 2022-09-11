@@ -18,7 +18,7 @@ export async function updateProfileData(Data) {
     };
 
     let response = await axios.request(reqOptions);
-    console.log(response.data);
+    return response.data;
   } catch (error) {
     console.error(error);
     return { message: "something went wrong" };

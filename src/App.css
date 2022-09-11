@@ -2,6 +2,12 @@
   height: 100%;
 }
 
+.border-none {
+  border: none;
+}
+.border-bottom-1px {
+  border-bottom: 1px solid rgb(0, 0, 0, 0.42);
+}
 .pt-24 {
   padding-top: 24px;
 }
@@ -28,13 +34,25 @@
 .max-width-70 {
   max-width: 70%;
 }
-
+.font-size-16px {
+  font-size: 16px;
+}
+.text-transform-capitalize {
+  text-transform: capitalize;
+}
 .stepper-form-section {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-
+.box-shadow-default {
+  border-radius: 10px;
+  background: #f0f0f0;
+  box-shadow: inset -5px 5px 10px #dddddd, inset 5px -5px 10px #ffffff;
+}
+.width-100-percentage {
+  width: 100%;
+}
 .mx-auto {
   margin-right: auto;
   margin-left: auto;
