@@ -5,7 +5,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Configuration
 
 - ## `Dependabot`
-    ### Node package version update tool for automatic version upgrafe
+  ### Node package version update tool for automatic version upgrafe
 
 ## Packages
 
@@ -21,6 +21,8 @@ Used packages
   `https://thispersondoesnotexist.com/` is a open source AI based user profile picture generator `using generative adversarial network (GAN)`
 - $react-google-autocomplete$
   For address autocomplete using `google map API`
+
+- $Axios$ - for API
 
 ## Available Scripts
 
